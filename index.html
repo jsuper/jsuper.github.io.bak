@@ -1,0 +1,17 @@
+---
+layout: default
+---
+
+<div class="site-content">
+	<div class="wrap content-wrap">
+		<p class="post-tip">Posts</p>
+		<ul class="posts">
+		 	{% for post in site.posts %}
+		      <li>
+		      	<p class="post-date">{{ post.date | date: "%b %-d, %Y" }}</p>
+		      	<a class="post-title" href="{{ post.url }}">{{ post.title }}</a>
+		      </li>
+	    	{% endfor %}
+		</ul>
+	</div>
+</div>
