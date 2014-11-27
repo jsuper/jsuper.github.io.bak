@@ -1,0 +1,207 @@
+---
+title: 使用org-mode写博客
+tags:
+  - emacs
+  - org-mode
+  - jekyll
+categories:
+  - emacs
+  - org-mode
+  - jekyll
+layout: post
+excerpt: Org-jekyll-mode是一个Emacs插件, 本文主要对org-jekyll-mode做了一个基本的介绍, 以及它的使用
+date: 2013-09-09
+---
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Org-mode和Jekyll简单介绍</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Org-mode 是什么？</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Org-mode是Emacs编辑器上一个基于文本的、快速且高效的文档编辑模式。起支持内容
+分级显示的编辑模式，同时支持强大的TODO列表，日志管理，做笔记或者写工程计划等。
+关于org-mode,本文不做过多的说明。具体可以参见官方的详细文档<a href="http://orgmode.org/" target="_blank">org-mode</a>
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Jekyll 是什么？</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Jekyll是一个采用Ruby编写的, 简单的、面向博客的静态网站生成工具。它能够将一系
+列文本文件（Markdown和Textile）转换成一个完整的，可以发布的静态页面。大名鼎鼎
+的代码托管商Github的Github pages就是采用的Jekyll做引擎。也就意味着，你可以免费
+使用Github的服务器来搭建属于你自己的项目WIKI，博客或者是网站等。关于Jekyll的详
+细使用，请参考官方文档<a href="http://jekyllrb.com/" target="_blank">Jekyll</a>.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 怎样使用org-mode来写Jekyll的博文？</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Jekyll博客本身是不支持对org-mode的文件进行转换的，不过我们通过将
+org-mode文件发布成html之后，将其扔到jekyll博客的 <b>_posts</b> 目录下，其就可以
+进行处理了。org-mode支持将org-mode文件转换成多种格式的文档的，如：latex，pdf，html等等。
+</p>
+
+<p>
+如果只是简单的将org-mode文件转成html之后，放到Jekyll的<sub>posts目录下，那样或多</sub>
+或少会出现一些问题， 比如，我们发现我们自己定义的一些样式根本就没在这个文件里面。
+当然，解决的办法也很简单，我们只需要编写一个简单的project-alist，来指定其不导
+出某些内容即可，如下是一个简单的org-publish-project-alist:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(setq org-publish-project alist 
+'((<span style="color: #2aa198;">"test-base"</span>
+    <span style="color: #859900;">:body-only</span> t
+    <span style="color: #859900;">:base-directory</span> <span style="color: #2aa198;">"your org-mode file root directory"</span>
+    <span style="color: #859900;">:publishing-directory</span> <span style="color: #2aa198;">"your jekyll project _post directory path"</span>))
+</pre>
+</div>
+<p>
+我们在发布当前文件的时候，只需要选择项目test-base即可。这样导出的文件就只会包含
+html文件的body部分，并不会包含头信息等。关于详细的project-alist的编写规则，请参考
+org-mode<a href="http://orgmode.org/manual/Publishing.html#Publishing" target="_blank">官方文档</a>.
+</p>
+
+<p>
+当然，这样导出之后还没完，我们还没给我们的文件添加属于Jekyll的yaml front matter呢？
+这时打开导出之后的文件，在其首部添加上你需要的信息即可。虽说这样能够解决org-mode
+导出到jekyll博客的问题，但是过多的手工操作需要我们去做。作为一名码农，这是绝对
+无法忍受的。所以就诞生了这么一个工具, <b>org-jeky-mode</b>. 该项目是开源
+项目，代码托管到Github上，详细请戳<a href="https://github.com/jsuper/org-jekyll-mode" target="_blank">这里</a>
+</p>
+
+<p>
+本文就是完全采用org-mode编写的，来一张截图:  
+</p>
+
+
+<div class="figure">
+<p><img src="/images/emacs/org-mode-jekyll-scrrenshot.png" alt="org-mode-jekyll-scrrenshot.png" style="margin-left: auto;margin-right:auto;display:block;" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Org-jekyll-mode介绍</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+org-jekyll-mode是一个emacs的插件，能够帮助用户使用org-mode来编写jekyll
+的博客文章, 使用org-jekyll-mode既可以快速创建类似jekyll博客文章命名格式的
+org-mode文件，也能够创建一个文件名不带时间前缀的文件。同时，
+org-jekyll-mode能够将最终导出的文件格式化成标准的jekyll博客文章格式。
+如： 如果你创建的org-mode文件的文件名是不带时间戳前缀的，那么
+org-jekyll-mode在导出最终的html文件之后，会在输出文件的文件名之前加上
+时间戳，如果你在org-mode-file中设定了 <b>#+DATE:</b> 选项，那么最终导出文件
+的时间戳则会以这个值为准，否则就采用当前时间。同时，org-jekyll-mode也
+可以直接在org-mode文件中控制最终导出文件的yaml font matter。目前，包
+含了所有jekyll支持的yaml front matter keywords。 不过，如果需要在
+org-mode文件中使用的话，这些关键字前面都需要加上 <b>#+YAML/</b> 前缀。同时，
+keyword最好大写。
+</p>
+
+<p>
+org-jekyll-mode本身是一个单独的插件，其在运行时是需要依赖org相关的包的，当然，目前对
+org-mode版本的最低要求是8.0. 因为org-mode 8.0版本相对于以前的有很多API的更改，本人又
+刚好使用的是8.0+的版本，所以就没有对以前的版本做兼容处理。
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 怎样使用org-jekyll-mode</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+org-jekyll-mode使用非常简单，只需要将其最新的代码克隆到本机，在你的emacs初始化文件
+里面添加如下代码即可:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(add-to-list 'load-path <span style="color: #2aa198;">"your-org-jekyll-mode-root"</span>)
+(<span style="color: #859900;">require</span> '<span style="color: #2aa198;">org-jekyll-mode</span>)
+(setq org-jekyll/jekyll-project-root <span style="color: #2aa198;">"your-jekyll-root"</span>)
+(setq org-jekyll/org-mode-project-root <span style="color: #2aa198;">"your-org-mode-project-root"</span>)
+</pre>
+</div>
+
+<p>
+在使用org-jekyll-mode之前，你必须要先定义一些变量的值:  
+</p>
+
+<p>
+<b>org-jekyll/jekyll-project-root</b>
+</p>
+
+<p>
+这个变量指定了你的jekyll项目的根目录。因为org-jekyll-mode会根据这个路径，将其文件发布
+到这个目录的相应子目录下。
+</p>
+
+<p>
+<b>org-jekyll/org-mode-project-root</b> 
+</p>
+
+<p>
+该变量指定了你的org-mode文件存放的目录。一般我喜欢将我的文件放在一个单独的网盘里面，
+这样方便管理和随时查看。
+</p>
+
+<p>
+<b>org-jekyll/org-mode-static-files-folder-name</b>  
+</p>
+
+<p>
+这个变量指定了你在org-mode项目目录下，用于存放静态文件，如：图片、css等文件的目录名。
+默认是你的org-mode项目的根目录。我个人比较喜欢将其放在一个叫assets的目录下。所以我的
+org-mode 项目目录结构:
+</p>
+<pre class="example">
+-Notes
+ --assets
+  ----img
+  ----css
+*.org
+</pre>
+
+<p>
+关于更多的介绍，请参见项目WIKI。
+</p>
+</div>
+
+<div id="outline-container-sec-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 发布当前文件</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+在文件编辑完毕之后，我们只需要执行 <b>M-x org-jekyll/publish-project</b> 就可以发布当前
+文件了.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> org-jekyll-mode中定义的快捷键</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+<b>[C-c C-n]</b> 创建一个新的org-mode文件，但是其文件名并不会带上时间戳。如
+果需要将在某一个子目录下创建该文件，只需要在目录名和文件名之间使用斜杠
+分开即可，如：2013/hello-world 就会在org-mode-project-root下，如果没有
+2013目录，则创建，否则在2013目录下创建hello-world.org文件.
+</p>
+
+<p>
+<b>[C-c C-d]</b> 功能跟 <b>C-c C-d</b> 一样，不过这个快捷键创建的文件会带上时间
+戳，也就是标准的jekyll post文件名格式。
+</p>
+
+<p>
+<b>[C-c C-p]</b> 发布当前文件
+</p>
+</div>
+</div>
+</div>
+</div>
